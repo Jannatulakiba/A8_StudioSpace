@@ -1,7 +1,9 @@
 import { createAuthClient } from "better-auth/react"
-export const authClient = createAuthClient({
-    /** The base URL of the server (optional if you're using the same domain) */
-     baseURL: process.env.BETTER_AUTH_URL 
-    
 
-})
+/**
+ * No explicit baseURL: the auth server is same-origin (/api/auth/[...all]),
+ * so better-auth defaults to window.location.origin. Note that
+ * process.env.BETTER_AUTH_URL is server-side only (not NEXT_PUBLIC_*, so it
+ * would be undefined in the browser bundle anyway).
+ */
+export const authClient = createAuthClient();
