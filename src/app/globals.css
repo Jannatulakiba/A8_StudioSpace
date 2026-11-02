@@ -1,0 +1,86 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: #f1f4f8;
+  --sf: #ffffff;
+  --tx: #0e1a2b;
+  --mu: #5b6779;
+  --bd: #dde3ec;
+  --ac: #e63946;
+  --ac2: #0f766e;
+}
+.dark {
+  --bg: #0a111c;
+  --sf: #121c2b;
+  --tx: #eaf0f8;
+  --mu: #93a1b5;
+  --bd: #25324a;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--sf);
+  --color-ink: var(--tx);
+  --color-muted: var(--mu);
+  --color-line: var(--bd);
+  --color-brand: var(--ac);
+  --color-brand-2: var(--ac2);
+  --font-sans: var(--font-dm), system-ui, sans-serif;
+  --font-display: var(--font-bricolage), var(--font-dm), sans-serif;
+}
+
+html { scroll-padding-top: 5rem; }
+body { background: var(--bg); color: var(--tx); }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
+:focus-visible { outline: 3px solid var(--ac2); outline-offset: 2px; }
+
+@layer components {
+  .wrap { margin-inline: auto; width: 100%; max-width: 1160px; padding-inline: 1.25rem; }
+  .btn {
+    position: relative; isolation: isolate; overflow: hidden;
+    display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+    padding: 11px 20px; border-radius: 10px; border: 1.5px solid var(--ac);
+    background: var(--ac); color: #fff; font-weight: 600; font-size: .95rem;
+    cursor: pointer; transition: transform .15s, box-shadow .15s, color .2s;
+  }
+  .btn::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; background: #b82330;
+    transform: translateX(-101%); transition: transform .35s cubic-bezier(.2,.7,.2,1);
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 18px #e6394640; }
+  .btn:hover::before { transform: none; }
+  .btn:active { transform: scale(.97); }
+  .btn-outline { background: transparent; color: var(--tx); border-color: var(--bd); }
+  .btn-outline::before { background: var(--ac); }
+  .btn-outline:hover { color: #fff; border-color: var(--ac); }
+  .btn-sm { padding: 8px 14px; font-size: .88rem; }
+  .field {
+    width: 100%; padding: 11px 13px; border-radius: 10px; border: 1.5px solid var(--bd);
+    background: var(--bg); color: var(--tx);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ---------- animations ---------- */
+@keyframes inL { from { opacity: 0; transform: translateX(-70px); } }
+@keyframes pop { from { opacity: 0; transform: scale(.94) translateY(10px); } }
+@keyframes fade { from { opacity: 0; transform: scale(1.06); } }
+@keyframes kb { from { transform: scale(1); } to { transform: scale(1.1); } }
+@keyframes mq { to { transform: translateX(-50%); } }
+
+/* zoom the visual in only when its slide becomes active */
+.swiper-slide-active .hero-bg { animation: kb 26s ease-out both; }
+.swiper-slide-active .hero-text > * { animation: inL .7s cubic-bezier(.2,.7,.2,1) both; }
+.swiper-slide-active .hero-text > p { animation-delay: .12s; }
+.swiper-slide-active .hero-text > .cta { animation-delay: .24s; }
+.marquee-track { display: inline-block; animation: mq 30s linear infinite; }
+
+/* swiper theme */
+.hero-swiper { --swiper-theme-color: #e63946; --swiper-navigation-size: 22px; }
+.hero-swiper .swiper-button-prev, .hero-swiper .swiper-button-next { color: #fff; }
+.hero-swiper .swiper-pagination-bullet { background: #fff; opacity: .5; }
+.hero-swiper .swiper-pagination-bullet-active { background: var(--ac); opacity: 1; width: 26px; border-radius: 6px; }
