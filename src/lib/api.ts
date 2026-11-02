@@ -1,12 +1,6 @@
-import { readDB, writeDB } from "./mock-db";
 import type { Booking, NewStudio, Studio } from "./types";
 
-/**
- * Data layer. Ekhon mock (localStorage). Server ready hole prottek function er bhitore
- * fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/...`, { credentials: "include" }) boshbe.
- * Function signature same thakbe, tai component change korte hobe na.
- */
-const delay = (ms = 250) => new Promise((r) => setTimeout(r, ms));
+const API = process.env.NEXT_PUBLIC_API_URL;
 
 export type StudioQuery = {
   search?: string;
@@ -16,87 +10,73 @@ export type StudioQuery = {
   limit?: number;
 };
 
-export async function getStudios(q: StudioQuery = {}): Promise<Studio[]> {
-  await delay();
-  let list = readDB().studios;
-  if (q.category && q.category !== "All") list = list.filter((s) => s.category === q.category);
-  if (q.owner) list = list.filter((s) => s.ownerEmail === q.owner);
-  if (q.search) {
-    const t = q.search.toLowerCase();
-    list = list.filter((s) => s.title.toLowerCase().includes(t) || s.location.toLowerCase().includes(t));
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(`${API}${path}`, {
+    credentials: "include",
+    cache: "no-store",
+    headers: { "Content-Type": "application/json" },
+    ...init,
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.message || "Something went wrong.");
   }
-  const sorters: Record<string, (a: Studio, b: Studio) => number> = {
-    rating: (a, b) => b.rating - a.rating,
-    newest: (a, b) => b.createdAt.localeCompare(a.createdAt),
-    "price-asc": (a, b) => a.hourlyRate - b.hourlyRate,
-    "price-desc": (a, b) => b.hourlyRate - a.hourlyRate,
-  };
-  list = [...list].sort(sorters[q.sort ?? "newest"]);
-  return q.limit ? list.slice(0, q.limit) : list;
+  return res.json();
+}
+
+export async function getStudios(q: StudioQuery = {}): Promise<Studio[]> {
+  const p = new URLSearchParams();
+  if (q.search) p.set("search", q.search);
+  if (q.category && q.category !== "All") p.set("category", q.category);
+  if (q.owner) p.set("owner", q.owner);
+  if (q.sort) p.set("sort", q.sort);
+  if (q.limit) p.set("limit", String(q.limit));
+  return request<Studio[]>(`/api/studios?${p.toString()}`);
 }
 
 export async function getStudio(id: string): Promise<Studio | null> {
-  await delay();
-  return readDB().studios.find((s) => s._id === id) ?? null;
+  try {
+    return await request<Studio>(`/api/studios/${id}`);
+  } catch {
+    return null;
+  }
 }
 
 export async function createStudio(data: NewStudio): Promise<Studio> {
-  await delay();
-  const db = readDB();
-  const studio: Studio = { ...data, _id: `s${Date.now()}`, rating: 0, createdAt: new Date().toISOString() };
-  db.studios.unshift(studio);
-  writeDB(db);
-  return studio;
+  return request<Studio>("/api/studios", { method: "POST", body: JSON.stringify(data) });
 }
 
 export async function updateStudio(id: string, patch: Partial<NewStudio>): Promise<void> {
-  await delay();
-  const db = readDB();
-  db.studios = db.studios.map((s) => (s._id === id ? { ...s, ...patch } : s));
-  writeDB(db);
+  await request(`/api/studios/${id}`, { method: "PUT", body: JSON.stringify(patch) });
 }
 
 export async function deleteStudio(id: string): Promise<void> {
-  await delay();
-  const db = readDB();
-  db.studios = db.studios.filter((s) => s._id !== id);
-  writeDB(db);
+  await request(`/api/studios/${id}`, { method: "DELETE" });
 }
 
 export async function getMyBookings(email: string): Promise<Booking[]> {
-  await delay();
-  return readDB().bookings.filter((b) => b.userEmail === email).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  return request<Booking[]>(`/api/bookings?email=${encodeURIComponent(email)}`);
 }
 
 type BookingInput = { studio: Studio; userEmail: string; date: string; startHour: number; endHour: number };
 
 export async function createBooking(i: BookingInput): Promise<Booking> {
-  await delay();
   if (i.endHour <= i.startHour) throw new Error("End time must be after start time.");
-  const db = readDB();
-  // Challenge 2: Confirmed booking er sathe overlap check (server e MongoDB query diye hobe)
-  const clash = db.bookings.find((b) => b.studioId === i.studio._id && b.date === i.date && b.status === "Confirmed" && i.startHour < b.endHour && i.endHour > b.startHour);
-  if (clash) throw new Error(`Already booked from ${clash.startHour}:00 to ${clash.endHour}:00 on this date. Pick another slot.`);
-  const booking: Booking = {
-    _id: `b${Date.now()}`,
-    studioId: i.studio._id,
-    studioTitle: i.studio.title,
-    userEmail: i.userEmail,
-    date: i.date,
-    startHour: i.startHour,
-    endHour: i.endHour,
-    total: (i.endHour - i.startHour) * i.studio.hourlyRate,
-    status: "Pending",
-    createdAt: new Date().toISOString(),
-  };
-  db.bookings.push(booking);
-  writeDB(db);
-  return booking;
+  return request<Booking>("/api/bookings", {
+    method: "POST",
+    body: JSON.stringify({
+      studioId: i.studio._id,
+      userEmail: i.userEmail,
+      date: i.date,
+      startHour: i.startHour,
+      endHour: i.endHour,
+    }),
+  });
+}
+export async function syncUser(u: { name: string; email: string; image?: string | null }): Promise<void> {
+  await request("/api/users", { method: "POST", body: JSON.stringify(u) });
 }
 
 export async function cancelBooking(id: string): Promise<void> {
-  await delay();
-  const db = readDB();
-  db.bookings = db.bookings.map((b) => (b._id === id && b.status === "Pending" ? { ...b, status: "Cancelled" } : b));
-  writeDB(db);
+  await request(`/api/bookings/${id}/cancel`, { method: "PATCH" });
 }
