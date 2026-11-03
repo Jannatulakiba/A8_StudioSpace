@@ -11,14 +11,6 @@ const nextConfig: NextConfig = {
       },
     },
   },
-  async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination: "https://studio-space-server-alpha.vercel.app",
-      },
-    ];
-  },
 };
 
 export default nextConfig;
