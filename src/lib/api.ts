@@ -1,6 +1,9 @@
+
 import type { Booking, NewStudio, Studio } from "./types";
 
 export const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+
 
 export type StudioQuery = {
   search?: string;
@@ -11,6 +14,7 @@ export type StudioQuery = {
 };
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  console.log("API URL:", API, "→", path);
   const res = await fetch(`${API}${path}`, {
     credentials: "include",
     cache: "no-store",
