@@ -5,7 +5,6 @@ const BRAND: [number, number, number] = [230, 57, 70]; // #e63946
 const INK: [number, number, number] = [14, 26, 43];
 const MUTED: [number, number, number] = [91, 103, 121];
 
-/** Confirmed/Completed booking-এর জন্য ডাউনলোডযোগ্য PDF receipt তৈরি করে। */
 export function downloadInvoice(b: Booking) {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const W = doc.internal.pageSize.getWidth();
