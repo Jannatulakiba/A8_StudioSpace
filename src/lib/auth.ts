@@ -16,11 +16,13 @@ export const auth = betterAuth({
     jwt() 
   ],
 session: {
-  cookieCache: {  enabled: true,
-    strategy: "jwt",
-    maxAge: 60 * 60 * 24 * 30, // 30 days
-    
-  }},
+  expiresIn: 60 * 60 * 24 * 30, // 30 day session — ফিরে এলেও log-in থাকবে
+  updateAge: 60 * 60 * 24, // প্রতিদিন session এর মেয়াদ roll হয়
+  cookieCache: {
+    enabled: true,
+    maxAge: 60 * 60, // 1 ঘণ্টা cache (সেশন ডেটা নিয়ে দ্রুত hydrate)
+  },
+},
 
 
   account: {
