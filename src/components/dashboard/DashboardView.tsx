@@ -6,6 +6,7 @@ import { useAsync } from "@/lib/hooks";
 import { useSession } from "@/lib/session";
 import SectionHead from "@/components/ui/SectionHead";
 import StatusBadge from "@/components/ui/StatusBadge";
+import HostBookings from "@/components/dashboard/HostBookings";
 
 export default function DashboardView() {
   const { user } = useSession();
@@ -32,6 +33,8 @@ export default function DashboardView() {
             </div>
           ))}
         </div>
+        <h2 className="mb-3 mt-10 text-2xl font-bold">Bookings for my studios</h2>
+        <HostBookings email={email} />
         <h2 className="mb-3 mt-10 text-2xl font-bold">Recent bookings</h2>
         <div className="rounded-2xl border border-line bg-surface">
           {bookings.data?.slice(0, 4).map((b) => (
