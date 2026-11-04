@@ -4,8 +4,8 @@
 
 StudioSpace connects creators — filmmakers, photographers, podcasters, musicians and artists — with real production spaces owned by real hosts. Cyc walls, sound stages, podcast lounges, music suites and art workshops, all bookable by the hour with transparent pricing.
 
-> 🔗 **Live Site:** <!-- TODO: paste your deployed client URL here after `vercel --prod`, e.g. https://studiospace.vercel.app --> **[LIVE URL HERE]**
-> 🔗 **Server Repo:** [A8_StudioSpace server] <!-- TODO: paste your server repo link -->
+> 🔗 **Live Site:** **https://studiospace-mu-sand.vercel.app**
+> 🔗 **Server Repo:** https://github.com/Jannatulakiba/StudioSpace_Server
 > 🔗 **Client Repo:** https://github.com/Jannatulakiba/A8_StudioSpace
 
 ---
