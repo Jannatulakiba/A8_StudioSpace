@@ -1,14 +1,20 @@
 import type { Booking, NewStudio, Studio } from "./types";
 import {
   cancelBookingAction,
+  completeBookingAction,
+  confirmBookingAction,
   createBookingAction,
+  createReviewAction,
   createStudioAction,
   deleteStudioAction,
+  getHostBookingsAction,
   getMyBookingsAction,
+  getWishlistAction,
+  addWishlistAction,
+  removeWishlistAction,
   syncUserAction,
   updateStudioAction,
 } from "./actions";
-import { authClient } from "./auth-client";
 
 export const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -94,6 +100,37 @@ export async function createBooking(i: BookingInput): Promise<Booking> {
 
 export async function cancelBooking(id: string): Promise<void> {
   unwrap(await cancelBookingAction(id));
+}
+
+/* ---------- host side booking lifecycle ---------- */
+export async function getHostBookings(): Promise<Booking[]> {
+  return unwrap(await getHostBookingsAction()) as Booking[];
+}
+
+export async function confirmBooking(id: string): Promise<void> {
+  unwrap(await confirmBookingAction(id));
+}
+
+export async function completeBooking(id: string): Promise<void> {
+  unwrap(await completeBookingAction(id));
+}
+
+/* ---------- reviews ---------- */
+export async function postReview(id: string, r: { rating: number; comment: string }): Promise<void> {
+  unwrap(await createReviewAction(id, r));
+}
+
+/* ---------- wishlist ---------- */
+export async function getWishlist(): Promise<Studio[]> {
+  return unwrap(await getWishlistAction()) as Studio[];
+}
+
+export async function addSaved(id: string): Promise<void> {
+  unwrap(await addWishlistAction(id));
+}
+
+export async function removeSaved(id: string): Promise<void> {
+  unwrap(await removeWishlistAction(id));
 }
 
 export async function syncUser(u: { name: string; email: string; image?: string | null }): Promise<void> {

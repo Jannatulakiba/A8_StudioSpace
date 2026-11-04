@@ -41,6 +41,34 @@ export async function getMyBookingsAction() {
   return call("/api/bookings");
 }
 
+export async function getHostBookingsAction() {
+  return call("/api/bookings?asHost=1");
+}
+
+export async function confirmBookingAction(id: string) {
+  return call(`/api/bookings/${id}/confirm`, { method: "PATCH" });
+}
+
+export async function completeBookingAction(id: string) {
+  return call(`/api/bookings/${id}/complete`, { method: "PATCH" });
+}
+
+export async function createReviewAction(id: string, r: unknown) {
+  return call(`/api/studios/${id}/reviews`, { method: "POST", body: JSON.stringify(r) });
+}
+
+export async function getWishlistAction() {
+  return call("/api/wishlist");
+}
+
+export async function addWishlistAction(id: string) {
+  return call(`/api/wishlist/${id}`, { method: "POST" });
+}
+
+export async function removeWishlistAction(id: string) {
+  return call(`/api/wishlist/${id}`, { method: "DELETE" });
+}
+
 export async function syncUserAction(u: unknown) {
   return call("/api/users", { method: "POST", body: JSON.stringify(u) });
 }

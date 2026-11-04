@@ -12,10 +12,19 @@ export type Studio = {
   rating: number;
   ownerName: string;
   ownerEmail: string;
+  reviews?: Review[];
   createdAt: string;
 };
 
-export type NewStudio = Omit<Studio, "_id" | "rating" | "createdAt">;
+export type Review = {
+  userName: string;
+  userEmail?: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+};
+
+export type NewStudio = Omit<Studio, "_id" | "rating" | "createdAt" | "reviews">;
 
 export type BookingStatus = "Pending" | "Confirmed" | "Completed" | "Cancelled";
 
