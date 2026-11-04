@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { cancelBooking, getMyBookings } from "@/lib/api";
 import { useAsync } from "@/lib/hooks";
+import { downloadInvoice } from "@/lib/invoice";
 import { useSession } from "@/lib/session";
 import type { Booking } from "@/lib/types";
 import EmptyState from "@/components/ui/EmptyState";
@@ -45,7 +46,16 @@ export default function MyBookings() {
                     <td className="p-3.5">{b.startHour}:00 – {b.endHour}:00</td>
                     <td className="p-3.5">${b.total}</td>
                     <td className="p-3.5"><StatusBadge status={b.status} /></td>
-                    <td className="p-3.5">{b.status === "Pending" && <button onClick={() => setTarget(b)} className="btn btn-outline btn-sm">Cancel booking</button>}</td>
+                    <td className="p-3.5">
+                      <div className="flex flex-wrap gap-2">
+                        {b.status === "Pending" && <button onClick={() => setTarget(b)} className="btn btn-outline btn-sm">Cancel booking</button>}
+                        {(b.status === "Confirmed" || b.status === "Completed") && (
+                          <button onClick={() => downloadInvoice(b)} className="btn btn-outline btn-sm">
+                            Download invoice
+                          </button>
+                        )}
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
