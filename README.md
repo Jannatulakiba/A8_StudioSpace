@@ -104,7 +104,7 @@ node seed.js         # inserts 8 demo studios into MongoDB (one-time upsert)
 | 🧪 Examiner (regular user) | `examiner@studiospace.com` | **Examiner123** |
 | 🛠️ Studio host | `tanvir@host.com` | **Host12345** |
 
-> Register a fresh account if the seeded passwords above have changed — registration takes one screen: name, email, password (uppercase + lowercase + min 6 chars).
+> Register a fresh account if the seeded passwords above have changed — registration takes one screen: name, email, photo URL (optional), password (uppercase + lowercase + min 6 chars).
 
 **Quick test flow:**
 1. Log in with the examiner account → Explore `/studios` → open a studio → **Book Workspace Now** → pick a date/hours → confirm it appears under `/my-bookings` with a 🔶 **Pending** badge.
