@@ -5,15 +5,15 @@ import { notFound, useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { getStudio } from "@/lib/api";
-import { REVIEWS } from "@/lib/constants";
 import { useAsync } from "@/lib/hooks";
 import { useSession } from "@/lib/session";
 import BookingModal from "@/components/booking/BookingModal";
 import { PageSkeleton } from "@/components/ui/Skeletons";
 import StudioImage from "./StudioImage";
+import ReviewForm from "./ReviewForm";
 
 export default function StudioDetails({ id }: { id: string }) {
-  const { data: s, loading } = useAsync(() => getStudio(id), id);
+  const { data: s, loading, reload } = useAsync(() => getStudio(id), id);
   const { user } = useSession();
   const router = useRouter();
   const [i, setI] = useState(0);
@@ -68,13 +68,29 @@ export default function StudioDetails({ id }: { id: string }) {
             {s.amenities.map((a) => <span key={a} className="rounded-full border border-line bg-surface px-3 py-1 text-sm">{a}</span>)}
           </div>
 
-          <h2 className="mt-7 text-xl font-bold">Reviews</h2>
-          {REVIEWS.map((r) => (
-            <div key={r.name} className="border-t border-line py-3">
-              <p><b>{r.name}</b> <span className="text-brand">{"★".repeat(r.rating)}</span></p>
-              <p className="text-muted">{r.text}</p>
-            </div>
-          ))}
+          <h2 className="mt-7 text-xl font-bold">
+            Reviews{" "}
+            <span className="text-sm font-normal text-muted">
+              {s.rating > 0 ? `· ★ ${s.rating.toFixed(1)} average` : ""}
+            </span>
+          </h2>
+          {s.reviews?.length ? (
+            [...s.reviews].reverse().map((r) => (
+              <div key={`${r.userEmail}-${r.createdAt}`} className="border-t border-line py-3">
+                <p>
+                  <b>{r.userName}</b>{" "}
+                  <span className="text-brand">{"★".repeat(r.rating)}</span>
+                  <span className="text-muted">{"☆".repeat(5 - r.rating)}</span>
+                </p>
+                <p className="text-muted">{r.comment}</p>
+              </div>
+            ))
+          ) : (
+            <p className="border-t border-line py-3 text-muted">
+              No reviews yet — be the first to shoot here and share your experience.
+            </p>
+          )}
+          {!own && <ReviewForm studioId={s._id} onPosted={reload} />}
         </div>
 
         <aside className="h-fit rounded-2xl border border-line bg-surface p-6 lg:sticky lg:top-24">
