@@ -20,6 +20,7 @@ const menu = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/add-studio", label: "Add New Studio" },
   { href: "/my-listings", label: "My Studio Listings" },
+  { href: "/saved-studios", label: "Saved Studios" },
   { href: "/my-bookings", label: "My Bookings" },
 ];
 
