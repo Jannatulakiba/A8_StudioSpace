@@ -2,17 +2,23 @@
 
 import { useEffect, useState } from "react";
 
-/** Simple data hook. `key` change hole abar fetch hoy; reload() dile force refetch. */
+/** Simple data hook. Key change abar fetch hoy; reload() dile force refetch. */
 export function useAsync<T>(fn: () => Promise<T>, key: string) {
   const [tick, setTick] = useState(0);
   const [res, setRes] = useState<{ k: string; data: T } | null>(null);
+  const [error, setError] = useState<string>("");
   const full = `${key}#${tick}`;
 
   useEffect(() => {
     let live = true;
-    fn().then((data) => {
-      if (live) setRes({ k: full, data });
-    });
+    setError("");
+    fn()
+      .then((data) => {
+        if (live) setRes({ k: full, data });
+      })
+      .catch((e: unknown) => {
+        if (live) setError(e instanceof Error ? e.message : "Something went wrong.");
+      });
     return () => {
       live = false;
     };
@@ -20,5 +26,5 @@ export function useAsync<T>(fn: () => Promise<T>, key: string) {
   }, [full]);
 
   const ready = res?.k === full;
-  return { data: ready ? res.data : undefined, loading: !ready, reload: () => setTick((t) => t + 1) };
+  return { data: ready ? res.data : undefined, loading: !ready, error, reload: () => setTick((t) => t + 1) };
 }

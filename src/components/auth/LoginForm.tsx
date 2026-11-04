@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { loginWithGoogle } from "@/lib/session";
+import AuthShell from "./AuthShell";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -41,9 +42,8 @@ export default function LoginForm() {
   };
 
   return (
-    <section className="py-14">
-      <div className="wrap">
-        <form onSubmit={handleEmailLogin} className="mx-auto max-w-lg rounded-2xl border border-line bg-surface p-7">
+    <AuthShell>
+        <form onSubmit={handleEmailLogin} className="mx-auto w-full max-w-lg rounded-2xl border border-line bg-surface p-7">
           <h1 className="mb-2 text-3xl font-bold">Log in to StudioSpace</h1>
           <label htmlFor="email" className="mb-1.5 mt-4 block text-sm font-semibold">Email</label>
           <input id="email" name="email" type="email" required className="field" />
@@ -55,7 +55,6 @@ export default function LoginForm() {
           <button type="button" onClick={handleGoogleLogin} className="btn btn-outline mt-3 w-full">Continue with Google</button>
           <p className="mt-4 text-center text-sm text-muted">New here? <Link href="/register" className="font-semibold text-brand">Create an account</Link></p>
         </form>
-      </div>
-    </section>
+    </AuthShell>
   );
 }

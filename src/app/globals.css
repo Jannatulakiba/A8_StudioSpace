@@ -48,7 +48,7 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
     content: ""; position: absolute; inset: 0; z-index: -1; background: #b82330;
     transform: translateX(-101%); transition: transform .35s cubic-bezier(.2,.7,.2,1);
   }
-  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 18px #e6394640; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 18px color-mix(in srgb, var(--ac) 28%, transparent); }
   .btn:hover::before { transform: none; }
   .btn:active { transform: scale(.97); }
   .btn-outline { background: transparent; color: var(--tx); border-color: var(--bd); }

@@ -5,6 +5,7 @@ import "./globals.css";
 import Providers from "@/components/layout/Providers";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import UserSync from "@/components/layout/UserSync";
 
 const bricolage = Bricolage_Grotesque({ variable: "--font-bricolage", subsets: ["latin"], weight: ["600", "700", "800"] });
 const dm = DM_Sans({ variable: "--font-dm", subsets: ["latin"] });
@@ -22,7 +23,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Suspense fallback={<div className="h-[68px] border-b border-line" />}>
             <Navbar />
           </Suspense>
-          <main className="flex-1 overflow-x-clip">{children}</main>
+          <main className="flex-1 overflow-x-clip">
+            <UserSync />
+            {children}
+          </main>
           <Footer />
         </Providers>
       </body>

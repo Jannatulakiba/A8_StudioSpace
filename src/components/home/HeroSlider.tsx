@@ -49,7 +49,7 @@ export default function HeroSlider() {
       >
         {slides.map((s, i) => (
           <SwiperSlide key={s.img}>
-            <div className="relative min-h-[620px] overflow-hidden">
+            <div className="relative min-h-[540px] overflow-hidden sm:min-h-[580px] md:min-h-[620px]">
               {/* slide-specific full-bleed visual */}
               <Image
                 src={s.img}
@@ -64,7 +64,7 @@ export default function HeroSlider() {
                 className="absolute inset-0 bg-gradient-to-r from-[#0a111c]/95 via-[#0a111c]/80 to-[#0a111c]/55"
               />
 
-              <div className="wrap relative z-10 grid min-h-[620px] items-center pb-28 pt-14">
+              <div className="wrap relative z-10 grid min-h-[540px] items-center pb-28 pt-14 sm:min-h-[580px] md:min-h-[620px]">
                 <div className="hero-text max-w-[62ch]">
                   <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-white/90">
                     {s.kicker}

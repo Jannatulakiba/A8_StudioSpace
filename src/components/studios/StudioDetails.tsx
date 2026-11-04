@@ -44,8 +44,8 @@ export default function StudioDetails({ id }: { id: string }) {
             </div>
             {imgs.length > 1 && (
               <>
-                <button onClick={() => step(-1)} aria-label="Previous photo" className="absolute left-3 top-1/2 grid h-10 w-10 -translate-y-1/2 cursor-pointer place-items-center rounded-lg bg-[#0e1a2b]/70 text-white"><ChevronLeft /></button>
-                <button onClick={() => step(1)} aria-label="Next photo" className="absolute right-3 top-1/2 grid h-10 w-10 -translate-y-1/2 cursor-pointer place-items-center rounded-lg bg-[#0e1a2b]/70 text-white"><ChevronRight /></button>
+                <button onClick={() => step(-1)} aria-label="Previous photo" className="absolute left-3 top-1/2 grid h-10 w-10 -translate-y-1/2 cursor-pointer place-items-center rounded-lg bg-ink/70 text-surface"><ChevronLeft /></button>
+                <button onClick={() => step(1)} aria-label="Next photo" className="absolute right-3 top-1/2 grid h-10 w-10 -translate-y-1/2 cursor-pointer place-items-center rounded-lg bg-ink/70 text-surface"><ChevronRight /></button>
               </>
             )}
           </div>

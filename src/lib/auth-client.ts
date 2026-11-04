@@ -1,4 +1,4 @@
-import { jwt } from "better-auth"
+
 import { jwtClient } from "better-auth/client/plugins"
 import { createAuthClient } from "better-auth/react"
 

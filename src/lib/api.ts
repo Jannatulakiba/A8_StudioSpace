@@ -1,9 +1,16 @@
-
 import type { Booking, NewStudio, Studio } from "./types";
+import {
+  cancelBookingAction,
+  createBookingAction,
+  createStudioAction,
+  deleteStudioAction,
+  getMyBookingsAction,
+  syncUserAction,
+  updateStudioAction,
+} from "./actions";
+import { authClient } from "./auth-client";
 
 export const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-
-
 
 export type StudioQuery = {
   search?: string;
@@ -13,21 +20,23 @@ export type StudioQuery = {
   limit?: number;
 };
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  console.log("API URL:", API, "→", path);
-  const res = await fetch(`${API}${path}`, {
-    credentials: "include",
-    cache: "no-store",
-    headers: { "Content-Type": "application/json" },
-    ...init,
-  });
+// শুধু খোলা (public) GET-এর জন্য
+async function request<T>(path: string): Promise<T> {
+  const res = await fetch(`${API}${path}`, { cache: "no-store" });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new Error(body.message || "Something went wrong.");
+    throw new Error(body.message || `Request failed (${res.status})`);
   }
   return res.json();
 }
 
+// Server Action-এর ফল খুলে দেখা, error হলে throw
+function unwrap<T>(r: { ok: true; data: T } | { ok: false; message: string }): T {
+  if (!r.ok) throw new Error(r.message);
+  return r.data;
+}
+
+/* ---------- public ---------- */
 export async function getStudios(q: StudioQuery = {}): Promise<Studio[]> {
   const p = new URLSearchParams();
   if (q.search) p.set("search", q.search);
@@ -46,41 +55,47 @@ export async function getStudio(id: string): Promise<Studio | null> {
   }
 }
 
+/* ---------- login লাগে (Server Action দিয়ে, JWT header-এ যায়) ---------- */
 export async function createStudio(data: NewStudio): Promise<Studio> {
-  return request<Studio>("/api/studios", { method: "POST", body: JSON.stringify(data) });
+  return unwrap(await createStudioAction(data)) as Studio;
 }
 
 export async function updateStudio(id: string, patch: Partial<NewStudio>): Promise<void> {
-  await request(`/api/studios/${id}`, { method: "PUT", body: JSON.stringify(patch) });
+  unwrap(await updateStudioAction(id, patch));
 }
 
 export async function deleteStudio(id: string): Promise<void> {
-  await request(`/api/studios/${id}`, { method: "DELETE" });
+  unwrap(await deleteStudioAction(id));
 }
 
-export async function getMyBookings(email: string): Promise<Booking[]> {
-  return request<Booking[]>(`/api/bookings?email=${encodeURIComponent(email)}`);
+export async function getMyBookings(_email?: string): Promise<Booking[]> {
+  return unwrap(await getMyBookingsAction()) as Booking[]; // email এখন token থেকে আসে
 }
 
-type BookingInput = { studio: Studio; userEmail: string; date: string; startHour: number; endHour: number };
+type BookingInput = {
+  studio: Studio;
+  userEmail?: string; // আগের caller গুলো ভাঙবে না, server এটা ব্যবহার করে না
+  date: string;
+  startHour: number;
+  endHour: number;
+};
 
 export async function createBooking(i: BookingInput): Promise<Booking> {
   if (i.endHour <= i.startHour) throw new Error("End time must be after start time.");
-  return request<Booking>("/api/bookings", {
-    method: "POST",
-    body: JSON.stringify({
+  return unwrap(
+    await createBookingAction({
       studioId: i.studio._id,
-      userEmail: i.userEmail,
       date: i.date,
       startHour: i.startHour,
       endHour: i.endHour,
     }),
-  });
-}
-export async function syncUser(u: { name: string; email: string; image?: string | null }): Promise<void> {
-  await request("/api/users", { method: "POST", body: JSON.stringify(u) });
+  ) as Booking;
 }
 
 export async function cancelBooking(id: string): Promise<void> {
-  await request(`/api/bookings/${id}/cancel`, { method: "PATCH" });
+  unwrap(await cancelBookingAction(id));
+}
+
+export async function syncUser(u: { name: string; email: string; image?: string | null }): Promise<void> {
+  unwrap(await syncUserAction({ name: u.name, image: u.image }));
 }

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { loginWithGoogle } from "@/lib/session";
+import AuthShell from "./AuthShell";
 
 function checkPassword(p: string) {
   if (!/[A-Z]/.test(p)) return "Add at least one uppercase letter.";
@@ -52,9 +53,8 @@ export default function RegisterForm() {
 
   const label = "mb-1.5 mt-4 block text-sm font-semibold";
   return (
-    <section className="py-14">
-      <div className="wrap">
-        <form onSubmit={handleRegister} className="mx-auto max-w-lg rounded-2xl border border-line bg-surface p-7">
+    <AuthShell>
+        <form onSubmit={handleRegister} className="mx-auto w-full max-w-lg rounded-2xl border border-line bg-surface p-7">
           <h1 className="mb-2 text-3xl font-bold">Create your account</h1>
           <label htmlFor="name" className={label}>Name</label>
           <input id="name" name="name" required className="field" />
@@ -67,7 +67,6 @@ export default function RegisterForm() {
           <button type="button" onClick={handleGoogleRegister} className="btn btn-outline mt-3 w-full">Continue with Google</button>
           <p className="mt-4 text-center text-sm text-muted">Already registered? <Link href="/login" className="font-semibold text-brand">Log in</Link></p>
         </form>
-      </div>
-    </section>
+    </AuthShell>
   );
 }
