@@ -1,149 +1,82 @@
-# 🎬 StudioSpace
+# StudioSpace
 
-**Peer-to-peer creative workspace & production studio sharing platform.**
+**Find and book creative studios by the hour.**
 
-StudioSpace connects creators — filmmakers, photographers, podcasters, musicians and artists — with real production spaces owned by real hosts. Cyc walls, sound stages, podcast lounges, music suites and art workshops, all bookable by the hour with transparent pricing.
+StudioSpace connects creators with production spaces such as photo studios, film stages, podcast rooms, music suites, and workshops.
 
-> 🔗 **Live Site:** **https://studiospace-mu-sand.vercel.app**
-> 🔗 **Server Repo:** https://github.com/Jannatulakiba/StudioSpace_Server
-> 🔗 **Client Repo:** https://github.com/Jannatulakiba/A8_StudioSpace
+**Live client:** [https://studiospace-mu-sand.vercel.app](https://studiospace-mu-sand.vercel.app)
 
----
+## Features
 
-## ✨ Features
+- Browse, search, filter, and sort creative studio listings.
+- View studio photos, amenities, host information, ratings, and reviews.
+- Book a studio by date and time, and track booking status.
+- Create and manage studio listings as a host.
+- Save studios to a personal wishlist.
+- Use a responsive interface with light and dark themes.
 
-- **🔍 Explore & filter studios** — searchable, category-filtered, price-sorted grid of all listed workspaces with branded skeleton loading and friendly empty states.
-- **🏛️ Rich studio detail pages** — image carousel, amenity chips, host profile, reviews and an hourly booking modal with live cost preview.
-- **📅 Smart booking system** — date + hour-range reservation with instant overlap detection against confirmed bookings, so a slot can never be double-booked.
-- **🛠️ Full listing CRUD** — hosts list new studios (with imgbb image upload), update, and delete with confirmation modals; every listing is ownership-protected.
-- **📊 Personal dashboards** — My Listings and My Bookings views with live status badges (Pending → Confirmed → Completed / Cancelled) and one-click cancellation for pending slots.
-- **🔐 JWT-secured API** — BetterAuth (Google + email/password) issues JWTs; every mutating endpoint validates them and enforces owner-level authorization.
-- **🌙 Dark / light theme toggle** — full system-wide theming via CSS custom properties.
-- **🍞 Modern UX polish** — Sonner toasts on every action, custom 404, Swiper hero, marquee category links, and scroll-reveal animations.
+## Tech stack
 
----
+- **Framework:** Next.js 16 App Router, React 19, and TypeScript.
+- **Styling and UI:** Tailwind CSS v4, Base UI, and Lucide icons.
+- **Authentication:** Better Auth with email/password and optional Google sign-in.
+- **Data and services:** MongoDB for authentication, a separate StudioSpace API for listings and bookings, and optional ImgBB image uploads.
+- **Hosting:** Vercel.
 
-## 🧰 Tech Stack
+## Run locally
 
-| Layer | Technology |
-| --- | --- |
-| Framework | Next.js 16 (App Router), React 19, TypeScript |
-| Styling & UI | Tailwind CSS v4 (CSS-first theme), custom components, Swiper.js, Lucide icons |
-| Fonts | Bricolage Grotesque (display) · DM Sans (body) |
-| State & notifications | React hooks (`useSyncExternalStore`), Sonner toasts |
-| Auth | BetterAuth (JWT, session cookie caching, MongoDB adapter) + Google OAuth |
-| Backend API | Express 5 (Node.js), JWT verification via `jose` (JWKS) |
-| Database | MongoDB (Atlas) — `studios`, `bookings`, `users` collections |
-| Media | imgbb image upload API |
-| Hosting | Vercel (client + server) · MongoDB Atlas |
+1. Install Node.js and npm, then clone this client repository:
 
----
+   ```bash
+   git clone https://github.com/Jannatulakiba/A8_StudioSpace.git
+   cd A8_StudioSpace
+   npm install
+   ```
 
-## 🧑‍💻 Getting Started (Local Setup)
+2. Set up and run the [StudioSpace API](https://github.com/Jannatulakiba/StudioSpace_Server) by following its setup instructions. The client needs the API to load studios and manage bookings.
 
-### Prerequisites
+3. Create a `.env.local` file in the client project root:
 
-- Node.js 18+ and npm
-- A MongoDB Atlas cluster (free M0 tier is fine)
-- Google OAuth credentials (Client ID & Secret) if you want social login
-- An imgbb API key for image uploads
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:5000
+   BETTER_AUTH_URL=http://localhost:3000
+   BETTER_AUTH_SECRET=replace-with-a-long-random-secret
+   MONGODB_URI=your-mongodb-connection-string
 
-### 1. Clone & install
+   # Optional: configure these to enable Google sign-in.
+   GOOGLE_CLIENT_ID=
+   GOOGLE_CLIENT_SECRET=
 
-```bash
-git clone https://github.com/Jannatulakiba/A8_StudioSpace.git
-cd A8_StudioSpace
+   # Optional: enables direct image uploads; users can also provide an image URL.
+   NEXT_PUBLIC_IMGBB_KEY=
+   ```
 
-# backend
-npm install          # Express API (see server repo folder)
+   Configure Google OAuth's local redirect URI as `http://localhost:3000/api/auth/callback/google` if enabling Google sign-in.
 
-# frontend (this repo / client folder)
-npm install
-```
+4. Start the client:
 
-### 2. Configure environment variables
+   ```bash
+   npm run dev
+   ```
 
-**Client** — create `.env` in the root of this repo:
+5. Open [http://localhost:3000](http://localhost:3000).
 
-```env
-NEXT_PUBLIC_API_URL=http://localhost:5000   # Express API base URL
-BETTER_AUTH_URL=http://localhost:3000       # this client's URL (auth callback + JWKS issuer)
-BETTER_AUTH_SECRET=super-secret-key
-MONGODB_URI=mongodb+srv://<user>:<pass>@<cluster>/<db>
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-NEXT_PUBLIC_IMGBB_KEY=your-imgbb-api-key
-```
+## Examiner demo credentials
 
-> ⚠️ For Google OAuth to work locally, add `http://localhost:3000/api/auth/callback/google` as an authorized redirect URI in your Google Cloud Console credentials.
+Use the following demo accounts to explore the deployed site. Demo account availability may depend on the live service's seeded data.
 
-### 3. Run both servers
-
-```bash
-# Terminal 1 — Express API (server repo)
-npm start            # → http://localhost:5000
-
-# Terminal 2 — Next.js client (this repo)
-npm run dev          # → http://localhost:3000
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### 4. Seed demo data (optional)
-
-```bash
-node seed.js         # inserts 8 demo studios into MongoDB (one-time upsert)
-```
-
----
-
-## 🔑 Examiner Test Credentials
-
-| Role | Email | Password |
+| Account | Email | Password |
 | --- | --- | --- |
-| 🧪 Examiner (regular user) | `examiner@studiospace.com` | **Examiner123** |
-| 🛠️ Studio host | `tanvir@host.com` | **Host12345** |
+| Examiner | `examiner@studiospace.com` | `Examiner123` |
+| Studio host | `tanvir@host.com` | `Host12345` |
 
-> Register a fresh account if the seeded passwords above have changed — registration takes one screen: name, email, photo URL (optional), password (uppercase + lowercase + min 6 chars).
+If a demo account is unavailable, create an account from the registration page.
 
-**Quick test flow:**
-1. Log in with the examiner account → Explore `/studios` → open a studio → **Book Workspace Now** → pick a date/hours → confirm it appears under `/my-bookings` with a 🔶 **Pending** badge.
-2. Log in as the host → **My Studio Listings** → try **Edit** and **Delete** (with confirmation modal).
-3. Hit `/random-404-url` to see the custom aperture 404 page.
-4. Toggle 🌙/☀️ in the navbar — the whole system switches theme.
+## Available scripts
 
----
-
-## 📂 Project Structure
-
-```
-studiospace-client/
-├── src/
-│   ├── app/                  # App Router pages (/, /studios, /add-studio, /my-bookings, ...)
-│   ├── components/
-│   │   ├── auth/             # LoginForm, RegisterForm, AuthShell
-│   │   ├── booking/          # BookingModal, MyBookings, StatusBadge
-│   │   ├── home/             # HeroSlider, FeaturedStudios, Categories, HowItWorks, ...
-│   │   ├── layout/           # Navbar (sticky + dropdown), Footer, Logo, UserSync
-│   │   ├── studios/          # StudioGrid, StudioCard, StudioDetails, StudioForm, MyListings
-│   │   └── ui/               # Modal, Skeletons, SectionHead, EmptyState, ...
-│   └── lib/                  # auth, api client, server actions, hooks, constants, types
-└── public/studios/           # demo studio imagery
-```
-
----
-
-## 📋 Scripts
-
-| Command | Purpose |
+| Command | Description |
 | --- | --- |
-| `npm run dev` | Start Next.js in dev mode (Turbopack) |
-| `npm run build` | Production build (type-checking included) |
-| `npm start` | Serve the production build |
-| `npm run lint` | ESLint check |
-
----
-
-## 📄 License & credits
-
-Built for an academic assignment (Term A8). All demo data and imagery belong to the StudioSpace project team. © 2026 StudioSpace.
+| `npm run dev` | Start the local development server. |
+| `npm run build` | Create a production build. |
+| `npm start` | Serve the production build. |
+| `npm run lint` | Run ESLint. |
